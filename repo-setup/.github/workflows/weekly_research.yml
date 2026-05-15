@@ -1,0 +1,50 @@
+name: 🔍 Weekly BGM Research
+
+on:
+  schedule:
+    # 毎週月曜 日本時間 午前9時（UTC 00:00）
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+    inputs:
+      topic:
+        description: '調査するトピック（空欄でデフォルト3テーマ）'
+        required: false
+        default: ''
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: 📥 リポジトリをチェックアウト
+        uses: actions/checkout@v4
+
+      - name: 🐍 Python 3.11 セットアップ
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 依存パッケージをインストール
+        run: pip install google-generativeai
+
+      - name: 🔍 Gemini リサーチ実行
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if [ -n "${{ github.event.inputs.topic }}" ]; then
+            python scripts/gemini_research.py "${{ github.event.inputs.topic }}"
+          else
+            python scripts/gemini_research.py "lofi BGM YouTube 作業用 トレンド"
+            python scripts/gemini_research.py "チルアウト ambient 睡眠用 BGM"
+            python scripts/gemini_research.py "study music concentration focus"
+          fi
+
+      - name: 💾 結果をGitHubにコミット
+        run: |
+          git config user.name  "AI Content Bot 🤖"
+          git config user.email "bot@ai-content-company.local"
+          git add results/
+          git diff --staged --quiet || git commit -m "🔍 Weekly research: $(date +'%Y-%m-%d')"
+          git push
