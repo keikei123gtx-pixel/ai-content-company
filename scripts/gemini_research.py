@@ -3,7 +3,7 @@ from datetime import datetime
 from pathlib import Path
 
 API_KEY = os.environ.get("GEMINI_API_KEY", "")
-MODEL   = "gemini-1.5-flash"
+MODEL   = "gemini-2.0-flash"
 
 try:
     import google.generativeai as genai
