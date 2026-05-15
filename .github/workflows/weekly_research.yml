@@ -36,8 +36,6 @@ jobs:
             python scripts/gemini_research.py "${{ github.event.inputs.topic }}"
           else
             python scripts/gemini_research.py "lofi BGM YouTube 作業用 トレンド"
-            python scripts/gemini_research.py "チルアウト ambient 睡眠用 BGM"
-            python scripts/gemini_research.py "study music concentration focus"
           fi
 
       - name: 💾 結果をコミット
